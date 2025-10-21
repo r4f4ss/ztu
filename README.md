@@ -15,7 +15,7 @@ DESCRIPTION:
    Examples of use:
 
    - to compress a file 
-   $ztu -o fileCompressed -c file
+   $ztu -o fileCompressed -i dictionaryCID -c file
 
    - to decompress a file 
    $ztu -o fileDecompressed -d file
@@ -26,5 +26,6 @@ GLOBAL OPTIONS:
    --output string, -o string  Output file name
    --compress, -c              compress file
    --decompress, -d            decompress file
+   --cid string, -i string     CID of dictionary for compression
    --help, -h                  show help
 ```
