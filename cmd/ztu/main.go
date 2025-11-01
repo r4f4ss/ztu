@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/r4f4ss/ztu/params"
 	"github.com/urfave/cli/v3"
 )
 
 const descritptionStr = `Examples of use:
 
 - to compress a file 
-$ztu -o fileCompressed -c file
+$ztu -o fileCompressed -i dictionaryCID -c file
 
 - to decompress a file 
 $ztu -o fileDecompressed -d file
@@ -24,7 +25,7 @@ func main() {
 		Usage:       "An implementation of the ZIPFS compression/decompression specification",
 		ArgsUsage:   "file",
 		Description: descritptionStr,
-		Flags:       ztuFlags,
+		Flags:       params.ZtuFlags,
 		Action:      ztu,
 	}
 
@@ -38,11 +39,17 @@ func main() {
 }
 
 func ztu(_ context.Context, c *cli.Command) error {
-	config, err := getConfig(c)
+	config, err := params.GetConfig(c)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(config)
+	if config.IsCompression {
+		// compression.Compress(config)
+		return fmt.Errorf("compression not implemented (wip)")
+	} else {
+		return fmt.Errorf("decompression not implemented")
+	}
+
 	return nil
 }
