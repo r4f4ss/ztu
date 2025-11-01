@@ -1,4 +1,4 @@
-package main
+package params
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
-var ztuFlags = []cli.Flag{
+var ZtuFlags = []cli.Flag{
 	&cli.StringFlag{
 		Name:      "output",
 		Usage:     "Output file name",
@@ -34,14 +34,14 @@ var ztuFlags = []cli.Flag{
 	},
 }
 
-type config struct {
-	output        string
-	input         string
-	isCompression bool
-	dictCid       cid.Cid
+type Config struct {
+	Output        string
+	Input         string
+	IsCompression bool
+	DictCid       cid.Cid
 }
 
-func getConfig(c *cli.Command) (*config, error) {
+func GetConfig(c *cli.Command) (*Config, error) {
 
 	compress := c.Bool("compress")
 	decompress := c.Bool("decompress")
@@ -83,11 +83,11 @@ func getConfig(c *cli.Command) (*config, error) {
 		}
 	}
 
-	conf := &config{
-		output:        output,
-		input:         file,
-		isCompression: isCompression,
-		dictCid:       dictCid,
+	conf := &Config{
+		Output:        output,
+		Input:         file,
+		IsCompression: isCompression,
+		DictCid:       dictCid,
 	}
 	return conf, nil
 }
