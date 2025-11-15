@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/r4f4ss/ztu/bitpackage"
 	"github.com/r4f4ss/ztu/ipfs"
 	"github.com/r4f4ss/ztu/params"
 )
@@ -17,13 +18,14 @@ type fileNode struct {
 func Compress(config *params.Config) error {
 
 	if !config.IsCompression {
-		fmt.Errorf("not to compress")
+		return fmt.Errorf("not to compress")
 	}
 
 	dictionary, err := ipfs.GetDictionaryByCID(config.DictCid)
 	if err != nil {
 		return err
 	}
+	pack := bitpackage.NewPack(len(dictionary.Segments), nil)
 
 	fileList, err := getListFromFile(config.Input)
 	if err != nil {
@@ -55,6 +57,16 @@ func Compress(config *params.Config) error {
 				}
 			}
 		}
+	}
+
+	i := 0
+	for e := fileList.Front(); e != nil; e = e.Next() {
+		if e.Value.(*fileNode).data == nil {
+			pack.Packing(&fileFull[i], nil)
+		} else {
+			pack.Packing(nil, e.Value.(*fileNode).data)
+		}
+		i++
 	}
 
 	return nil
