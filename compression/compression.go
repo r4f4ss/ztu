@@ -3,17 +3,12 @@ package compression
 import (
 	"container/list"
 	"fmt"
-	"os"
 
 	"github.com/r4f4ss/ztu/bitpackage"
+	"github.com/r4f4ss/ztu/fileio"
 	"github.com/r4f4ss/ztu/ipfs"
 	"github.com/r4f4ss/ztu/params"
 )
-
-type fileNode struct {
-	data     *byte
-	position uint
-}
 
 func Compress(config *params.Config) error {
 
@@ -27,7 +22,7 @@ func Compress(config *params.Config) error {
 	}
 	pack := bitpackage.NewPack(len(dictionary.Segments), nil)
 
-	fileList, err := getListFromFile(config.Input)
+	fileList, err := fileio.GetListFromFile(config.Input)
 	if err != nil {
 		return err
 	}
@@ -42,7 +37,7 @@ func Compress(config *params.Config) error {
 		seg := dictionary.Segments[i]
 		for e := fileList.Front(); e != nil; {
 			if isSameSegment(seg, e) {
-				fileFull[e.Value.(*fileNode).position] = i
+				fileFull[e.Value.(*fileio.FileNode).Position] = i
 				setNElementsNill(e, len(seg))
 				for range len(seg) {
 					e = e.Next()
@@ -61,12 +56,18 @@ func Compress(config *params.Config) error {
 
 	i := 0
 	for e := fileList.Front(); e != nil; e = e.Next() {
-		if e.Value.(*fileNode).data == nil {
+		if e.Value.(*fileio.FileNode).Data == nil {
 			pack.Packing(&fileFull[i], nil)
 		} else {
-			pack.Packing(nil, e.Value.(*fileNode).data)
+			pack.Packing(nil, e.Value.(*fileio.FileNode).Data)
 		}
 		i++
+	}
+
+	fileOut := fileio.NewCompressedFile(config.DictCid.String(), pack.GetData())
+	err = fileOut.WriteToFile(config.Output)
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -77,48 +78,17 @@ func setNElementsNill(e *list.Element, n int) {
 		if e == nil {
 			break
 		}
-		e.Value.(*fileNode).data = nil
+		e.Value.(*fileio.FileNode).Data = nil
 		e = e.Next()
 	}
 }
 
-func getListFromFile(input string) (*list.List, error) {
-	originalFile, err := os.OpenFile(input, os.O_RDONLY, os.ModePerm)
-	if err != nil {
-		return nil, err
-	}
-	defer originalFile.Close()
-
-	stat, err := originalFile.Stat()
-	if err != nil {
-		return nil, err
-	}
-
-	fileBytes := make([]byte, stat.Size())
-	_, err = originalFile.Read(fileBytes)
-	if err != nil {
-		return nil, err
-	}
-
-	fileList := list.New()
-	var pos uint = 0
-	for _, b := range fileBytes {
-		node := &fileNode{
-			data:     &b,
-			position: pos,
-		}
-		fileList.PushBack(node)
-		pos++
-	}
-	return fileList, nil
-}
-
 func isSameSegment(segment []byte, e *list.Element) bool {
 	for i := 0; i < len(segment); i++ {
-		if e == nil || e.Value.(*fileNode).data == nil {
+		if e == nil || e.Value.(*fileio.FileNode).Data == nil {
 			return false
 		}
-		if segment[i] != *e.Value.(*fileNode).data {
+		if segment[i] != *e.Value.(*fileio.FileNode).Data {
 			return false
 		}
 		e = e.Next()
