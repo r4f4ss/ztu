@@ -3,6 +3,7 @@ module github.com/r4f4ss/ztu
 go 1.25.3
 
 require (
+	github.com/fxamacker/cbor/v2 v2.9.0
 	github.com/ipfs/boxo v0.35.0
 	github.com/ipfs/go-cid v0.5.0
 	github.com/ipfs/kubo v0.38.1
@@ -72,6 +73,7 @@ require (
 	github.com/whyrusleeping/base32 v0.0.0-20170828182744-c30ac30633cc // indirect
 	github.com/whyrusleeping/chunker v0.0.0-20181014151217-fe64bd25879f // indirect
 	github.com/whyrusleeping/go-keyspace v0.0.0-20160322163242-5b898ac5add1 // indirect
+	github.com/x448/float16 v0.8.4 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/otel v1.38.0 // indirect
 	go.opentelemetry.io/otel/metric v1.38.0 // indirect
