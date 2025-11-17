@@ -2,7 +2,7 @@
 > Work in progress.
 
 # ztu
-An implementation of the ZIPFS compression/decompression specification
+An implementation of the [ZIPFS compression/decompression specification](https://github.com/r4f4ss/zipfs-specs)
 
 ```shell
 NAME:
