@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/r4f4ss/ztu/compression"
+	"github.com/r4f4ss/ztu/decompression"
 	"github.com/r4f4ss/ztu/params"
 	"github.com/urfave/cli/v3"
 )
@@ -45,10 +47,15 @@ func ztu(_ context.Context, c *cli.Command) error {
 	}
 
 	if config.IsCompression {
-		// compression.Compress(config)
-		return fmt.Errorf("compression not implemented (wip)")
+		err = compression.Compress(config)
+		if err != nil {
+			return err
+		}
 	} else {
-		return fmt.Errorf("decompression not implemented")
+		err = decompression.Decompress(config)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
