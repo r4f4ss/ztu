@@ -30,10 +30,10 @@ func NewPack(dictSize int, data []byte) *Pack {
 
 func (p *Pack) Packing(code *int, data *byte) {
 	if code != nil && data == nil {
-		p.packNBit(*code, 1)
+		p.packNBit(*code+1, 1)
 		p.packNBit(1, 0)
 	} else if code == nil && data != nil {
-		p.packNBit(p.dictSize, 1)
+		p.packNBit(p.dictSize+1, 1)
 		p.packNBit(1, 0)
 		p.packByte(*data)
 	}
@@ -55,6 +55,10 @@ func (p *Pack) GetData() []byte {
 }
 
 func (p *Pack) packNBit(n int, bit byte) {
+	if p.positionIn == 8 {
+		p.data = append(p.data, 0)
+		p.positionIn = 0
+	}
 	var totalSize float64 = float64((n + p.positionIn)) / 8.0
 	size := int(math.Ceil(totalSize))
 	mask := make([]byte, size)
@@ -83,7 +87,8 @@ func (p *Pack) packNBit(n int, bit byte) {
 
 func (p *Pack) packByte(by byte) {
 	if p.positionIn == 0 {
-		p.data = append(p.data, by)
+		p.data[len(p.data)-1] = by
+		p.positionIn = 8
 	} else {
 		by0 := by >> p.positionIn
 		by1 := by << (8 - p.positionIn)
@@ -112,6 +117,7 @@ func (p *Pack) getNextCode() *int {
 		p.indexOut++
 		p.positionOut = 0
 	}
+	code--
 	return &code
 }
 

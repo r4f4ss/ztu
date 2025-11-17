@@ -5,7 +5,7 @@ import (
 )
 
 func WriteDataToFile(filePath string, data []byte) error {
-	err := os.WriteFile(filePath, data, os.ModePerm)
+	err := os.WriteFile(filePath, data, 0600)
 	if err != nil {
 		return err
 	}

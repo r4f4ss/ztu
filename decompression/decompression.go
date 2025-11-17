@@ -28,7 +28,7 @@ func Decompress(config *params.Config) error {
 	for cod, b := pack.UnpackingNext(); cod != nil; cod, b = pack.UnpackingNext() {
 		if *cod == len(dictionary.Segments) {
 			outputData = append(outputData, *b)
-		} else {
+		} else if *cod >= 0 {
 			outputData = append(outputData, dictionary.Segments[*cod]...)
 		}
 	}
